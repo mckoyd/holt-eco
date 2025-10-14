@@ -7,5 +7,6 @@
     "prettier",
     "typescript"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "type": "module"
 }

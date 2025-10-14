@@ -29,6 +29,21 @@ importers:
 
   packages/config: {}
 
+  services/test-service:
+    devDependencies:
+      '@holt-eco/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      eslint:
+        specifier: ^9.37.0
+        version: 9.37.0
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
 packages:
 
   '@eslint-community/eslint-utils@4.9.0':
