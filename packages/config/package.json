@@ -1,0 +1,11 @@
+{
+  "name": "@holt-eco/config",
+  "version": "0.0.1",
+  "main": "index.js",
+  "files": [
+    "eslint",
+    "prettier",
+    "typescript"
+  ],
+  "license": "MIT"
+}
