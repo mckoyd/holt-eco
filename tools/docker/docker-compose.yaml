@@ -1,0 +1,15 @@
+x-common-variables: &common-variables
+  NODE_ENV: ${NODE_ENV:-development}
+
+services:
+  base-service:
+    build:
+      context: ../../
+      dockerfile: tools/docker/Dockerfile.base
+    env_file:
+      - ../../.env
+    environment:
+      <<: *common-variables
+    volumes:
+      - ../../:/app
+    command: pnpm dev

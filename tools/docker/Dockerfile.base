@@ -1,0 +1,20 @@
+# Base Node.js image
+FROM node:20-alpine AS base
+
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+
+# Set working directory
+WORKDIR /app
+
+# Copy only package files for caching
+COPY package.json pnpm-lock.yaml* ./
+
+# Install dependencies (can be overridden by derived Dockerfiles)
+RUN pnpm install --frozen-lockfile
+
+# Default environment variable
+ENV NODE_ENV=production
+
+# Default command (overridden in service images)
+CMD ["node", "dist/main.js"]
