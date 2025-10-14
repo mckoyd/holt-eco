@@ -8,7 +8,13 @@
     "lint": "eslint . --ext .ts,.js",
     "lint:fix": "eslint . --ext .ts,.js --fix",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "docker:db:up": "docker compose -f tools/docker/docker-compose.db.yml up -d",
+    "docker:db:down": "docker compose -f tools/docker/docker-compose.db.yml down -v",
+    "docker:base:up": "docker compose -f tools/docker/docker-compose.yaml up --build",
+    "docker:base:down": "docker compose -f tools/docker/docker-compose.yaml down -v",
+    "docker:all:up": "docker compose -f tools/docker/docker-compose.db.yml -f tools/docker/docker-compose.yaml up --build",
+    "docker:all:down": "docker compose -f tools/docker/docker-compose.db.yml -f tools/docker/docker-compose.yaml down -v"
   },
   "lint-staged": {
     "*,{ts,js,json,md}": [
