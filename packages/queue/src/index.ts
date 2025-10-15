@@ -1,3 +1,4 @@
+import { createLogger } from "@holt-eco/logger";
 import {
   Job,
   JobsOptions,
@@ -9,6 +10,8 @@ import {
   WorkerOptions,
 } from "bullmq";
 import type { RedisOptions } from "ioredis";
+
+const log = createLogger("queue");
 
 /**
  * Base shape of job data
@@ -59,7 +62,10 @@ export class JobQueue<
       queueName,
       processor ??
         (async (job: Job<TData, TResult>): Promise<TResult> => {
-          console.log(`Processing job ${job.id}`, job.data);
+          log.info(
+            { jobId: job.id, jobData: job.data },
+            `Processing job ${job.id}: ${job.data}`
+          );
           // Return the same data as default behavior
           return job.data as unknown as TResult;
         }),
@@ -92,13 +98,17 @@ export class JobQueue<
    */
   private registerEvents(): void {
     this.events.on("completed", (event: { jobId: string }) => {
-      console.log(`[${this.name}] Job ${event.jobId} completed`);
+      log.info(
+        { jobId: event.jobId },
+        `[${this.name}] Job ${event.jobId} completed`
+      );
     });
 
     this.events.on(
       "failed",
       (event: { jobId: string; failedReason: string }) => {
-        console.error(
+        log.error(
+          { jobId: event.jobId, reason: event.failedReason },
           `[${this.name}] Job ${event.jobId} failed: ${event.failedReason}`
         );
       }
