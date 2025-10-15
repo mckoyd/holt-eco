@@ -14,22 +14,19 @@ import type { RedisOptions } from "ioredis";
 const log = createLogger("queue");
 
 /**
- * Base shape of job data
+ * Base shape of job data.
  */
 export interface BaseJobData {
   [key: string]: unknown;
 }
 
 /**
- * Strongly typed BullMQ Queue wrapper
- * – zero 'any'
- * – compiles cleanly under strict mode
- * – compatible with BullMQ v5+
+ * Strongly typed BullMQ Queue wrapper with logger integration.
  */
 export class JobQueue<
   TName extends string,
   TData extends BaseJobData,
-  TResult = void,
+  TResult = unknown,
 > {
   readonly name: TName;
   readonly queue: Queue<TData, TResult>;
@@ -64,9 +61,8 @@ export class JobQueue<
         (async (job: Job<TData, TResult>): Promise<TResult> => {
           log.info(
             { jobId: job.id, jobData: job.data },
-            `Processing job ${job.id}: ${job.data}`
+            `[${this.name}] Processing job`
           );
-          // Return the same data as default behavior
           return job.data as unknown as TResult;
         }),
       {
@@ -80,21 +76,25 @@ export class JobQueue<
 
   /**
    * Add a new job to the queue.
-   * @param name - Job name string
-   * @param data - Job payload
+   * @param jobName - job name string
+   * @param data - payload for the job
    * @param opts - BullMQ job options
    */
   async addJob(
-    name: string,
+    jobName: string,
     data: TData,
     opts?: JobsOptions
   ): Promise<Job<TData, TResult>> {
-    // Cast name and data to bypass BullMQ internal Extract types
-    return this.queue.add(name as unknown as any, data as unknown as any, opts);
+    // boundary cast to satisfy BullMQ typings
+    return this.queue.add(
+      jobName as unknown as any,
+      data as unknown as any,
+      opts
+    );
   }
 
   /**
-   * Subscribe to lifecycle events
+   * Subscribe to job completion/failure events.
    */
   private registerEvents(): void {
     this.events.on("completed", (event: { jobId: string }) => {
@@ -115,19 +115,3 @@ export class JobQueue<
     );
   }
 }
-
-/**
- * Example usage
- * -------------
- * interface EmailData { to: string; subject: string }
- *
- * const emailQueue = new JobQueue<"send-email", EmailData>(
- *   "send-email",
- *   { host: "127.0.0.1", port: 6379 },
- *   async (job) => {
- *     console.log("Sending email to:", job.data.to);
- *   }
- * );
- *
- * await emailQueue.addJob("send-email", { to: "a@b.com", subject: "Hello!" });
- */
