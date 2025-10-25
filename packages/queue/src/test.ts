@@ -10,14 +10,14 @@ async function main() {
     async (job) => {
       console.log("Processing job inside test:", job.data);
       return { echoed: job.data.foo };
-    }
+    },
   );
 
   const job = await queue.addJob(
     // cast name to appease ExtractNameType
     "holt-test" as unknown as string,
     // cast payload to appease ExtractDataType
-    { foo: "bar" } as unknown as any
+    { foo: "bar" } as unknown as any,
   );
 
   console.log("Enqueued job:", job.id);

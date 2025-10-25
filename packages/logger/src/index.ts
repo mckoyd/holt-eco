@@ -21,7 +21,7 @@ export interface LoggerConfig {
  */
 export function createLogger(
   service: string,
-  config: LoggerConfig = {}
+  config: LoggerConfig = {},
 ): PinoLogger {
   const baseLevel = config.level || process.env.LOG_LEVEL || "info";
   const isPretty = config.pretty ?? process.env.NODE_ENV !== "production";

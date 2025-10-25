@@ -41,7 +41,7 @@ export class JobQueue<
       queue?: QueueOptions;
       worker?: WorkerOptions;
       events?: QueueEventsOptions;
-    }
+    },
   ) {
     this.name = queueName;
 
@@ -61,14 +61,14 @@ export class JobQueue<
         (async (job: Job<TData, TResult>): Promise<TResult> => {
           log.info(
             { jobId: job.id, jobData: job.data },
-            `[${this.name}] Processing job`
+            `[${this.name}] Processing job`,
           );
           return job.data as unknown as TResult;
         }),
       {
         connection: redis,
         ...options?.worker,
-      }
+      },
     );
 
     this.registerEvents();
@@ -83,13 +83,13 @@ export class JobQueue<
   async addJob(
     jobName: string,
     data: TData,
-    opts?: JobsOptions
+    opts?: JobsOptions,
   ): Promise<Job<TData, TResult>> {
     // boundary cast to satisfy BullMQ typings
     return this.queue.add(
       jobName as unknown as any,
       data as unknown as any,
-      opts
+      opts,
     );
   }
 
@@ -100,7 +100,7 @@ export class JobQueue<
     this.events.on("completed", (event: { jobId: string }) => {
       log.info(
         { jobId: event.jobId },
-        `[${this.name}] Job ${event.jobId} completed`
+        `[${this.name}] Job ${event.jobId} completed`,
       );
     });
 
@@ -109,9 +109,9 @@ export class JobQueue<
       (event: { jobId: string; failedReason: string }) => {
         log.error(
           { jobId: event.jobId, reason: event.failedReason },
-          `[${this.name}] Job ${event.jobId} failed: ${event.failedReason}`
+          `[${this.name}] Job ${event.jobId} failed: ${event.failedReason}`,
         );
-      }
+      },
     );
   }
 }
