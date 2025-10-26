@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "echo '🧠 Holt development environment ready — run individual service dev scripts.'",
+    "dev:all": "pnpm --parallel --stream --filter \"./services/*\" start:dev",
+    "build:all": "pnpm -r --filter \"./services/*\" build",
+    "start:services": "pnpm -r --filter \"./services/*\" start",
     "lint": "pnpm exec eslint . --ext .ts,.js",
     "lint:fix": "pnpm exec eslint . --ext .ts,.js --fix",
     "format": "pnpm exec prettier --write .",
