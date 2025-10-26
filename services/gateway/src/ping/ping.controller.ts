@@ -8,6 +8,6 @@ export class PingController {
   @Get()
   ping() {
     this.log.info('Ping endpoint invoked');
-    return { pong: true };
+    return { message: 'pong', time: new Date().toISOString() };
   }
 }
